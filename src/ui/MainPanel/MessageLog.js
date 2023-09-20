@@ -47,7 +47,7 @@ export function MessageLog() {
           }); // .catch((error) => {}); ???
         }));
         await mutex.acquire(i);
-        setPairs((pairs) => updates.concat(pairs)); // concat entire list to front.
+        setPairs((pairs) => pairs.concat(updates.reverse())); // concat entire list to front.
         mutex.release();
       };
       return Promise.all(Array.from({ length: 100 }).map((_, i) => retrieve(i))); // TEMPORARILY reduce to 10
@@ -68,7 +68,7 @@ export function MessageLog() {
     listener(logs) {
       logs.forEach((log) => {
         fetchBlock({ blockNumber: log.blockNumber }).then((block) => {
-          setPairs((pairs) => [...pairs, { ...log, timestamp: Number(block.timestamp) }]);
+          setPairs((pairs) => [{ ...log, timestamp: Number(block.timestamp) }, ...pairs]);
         }); // .catch((error) => {}); ???
       });
     },
