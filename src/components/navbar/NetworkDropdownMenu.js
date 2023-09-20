@@ -69,7 +69,7 @@ export function NetworkDropdownMenu({ locked, children, switching, setSwitching 
               }}
             >
               <div className="flex justify-between items-center py-1 md:justify-start md:space-x-2">
-                <div className="flex justify-start flex-1">{CHAIN_PARAMS[chain.name].name}</div>
+                <div className="flex justify-start flex-1">{CHAIN_PARAMS[chain.name]?.name}</div>
                 <img
                   src={CHAIN_PARAMS[chain.name].image}
                   className="h-5 w-5"
