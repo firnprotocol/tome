@@ -1,6 +1,6 @@
 import { useNetwork } from "wagmi";
 
-import TOME_ICON from "assets/tome.png";
+import TOME_ICON from "assets/tome.svg";
 import QUESTION_ICON from "assets/icons/question.svg";
 import { NetworkDropdownMenu } from "components/navbar/NetworkDropdownMenu";
 import { CHAIN_PARAMS } from "constants/networks";

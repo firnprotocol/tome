@@ -51,7 +51,7 @@ module.exports = {
       template: "./public/index.html",
     }),
     new FaviconsWebpackPlugin({
-      logo: "./src/assets/tome.png",
+      logo: "./src/assets/tome.svg",
     }),
     new webpack.ProvidePlugin({
       React: "react",
