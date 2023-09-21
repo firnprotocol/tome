@@ -26,7 +26,7 @@ export function SubmitTxButton({ className, onClick, pendingLabel, label, onSucc
             {pendingLabel}
           </span>
           {" "}
-          <ButtonLoadingSpinner className="-mt-1"/>
+          <ButtonLoadingSpinner className="-mt-1 text-gray-50"/>
         </>
         :
         <span>{label}</span>

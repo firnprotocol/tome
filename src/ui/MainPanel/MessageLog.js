@@ -79,7 +79,7 @@ export function MessageLog() {
       <div className="pt-2 text-stone-700 text-sm flex">
         {done ?
           <span>Past messages retrieved.</span> :
-          <span>Retrieving past messages... <ButtonLoadingSpinner className="h-4 w-4 mb-1 opacity-100"/></span>
+          <span>Retrieving past messages... <ButtonLoadingSpinner className="h-3.5 w-3.5 mb-1 opacity-100"/></span>
         }
       </div>
       <Grid
