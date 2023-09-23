@@ -91,7 +91,7 @@ export function MessageLog() {
           pairs.map((pair, i) => {
             return <MessageItem {...pair} key={i}/>; // if (i < 20), else return undefined
           }) :
-          <span className="pt-2 text-sm text-yellow-600">There are currently no messages to show here.</span>
+          <span className="pt-2 text-sm text-yellow-700">There are currently no messages to show here.</span>
         }
       </Grid>
     </Card>
