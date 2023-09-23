@@ -1,4 +1,4 @@
-export const DOCS_URL = "https://app.firn.cash/whitepaper.pdf";
+export const DOCS_URL = "https://firn.cash/whitepaper.pdf";
 export const GITBOOK_URL = "https://docs.firn.cash";
 export const MEDIUM_URL = "https://medium.com/@firnprotocol";
 export const DISCORD_URL = "https://discord.gg/2TPJE7CMdu";

@@ -10,4 +10,4 @@ Once you understand how Firn's Snap works, Tome is very easy to understand. Firn
 
 Simple, yet extremely powerful. How will _your_ Dapp use Firn's Snap to "plug" privacy into its functionality?
 
-You can access a live, hosted version of Tome at [tome.fm](https://tome.fm). You can also visit Firn's main page at [app.firn.cash](https://app.firn.cash).
+You can access a live, hosted version of Tome at [tome.fm](https://tome.fm). You can also visit Firn's main page at [firn.cash](https://firn.cash).
