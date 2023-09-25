@@ -47,7 +47,11 @@ export function MainForm({ locked, setLocked, calculators }) {
   const tip = Math.ceil(parseFloat(formatUnits(gas, 15)));
   const message = `Your broadcast will cost ${(tip / 1000).toFixed(3)} ETH in gas.`;
   return (
-    <Card title="BROADCAST A MESSAGE PRIVATELY">
+    <Card title="ANONYMOUSLY BROADCAST A MESSAGE">
+      <div className="text-sm text-yellow-700 pb-2">
+        The message you enter and broadcast below will be public, and visible permanently on the blockchain.
+        Only <span className="italic">your identity</span> will be hidden; your message will not be. This action cannot be undone.
+      </div>
       <div className="font-telegrama text-sm text-stone-700 pb-1">
         MESSAGE
       </div>
@@ -69,8 +73,8 @@ export function MainForm({ locked, setLocked, calculators }) {
           || helper.length > 0
           || display === ""
         }
-        pendingLabel="BROADCASTING PRIVATELY"
-        label={<>BROADCAST PRIVATELY <PaperAirplaneIcon className={BTN_ICON_CLASSNAME}/></>}
+        pendingLabel="ANONYMOUSLY BROADCASTING"
+        label={<>ANONYMOUSLY BROADCAST <PaperAirplaneIcon className={BTN_ICON_CLASSNAME}/></>}
         onClick={() => {
           return initiateBroadcast({
             setDisplay,
