@@ -8,8 +8,8 @@ import { MainForm } from "ui/MainForm";
 import { MessageLog } from "ui/MainPanel/MessageLog";
 
 
-const FIXED_OVERHEAD = 2100;
-const DYNAMIC_OVERHEAD = 1;
+const FIXED_OVERHEAD = 188;
+const DYNAMIC_OVERHEAD = 0.684;
 
 export function MainPanel({ locked, setLocked }) {
   const { chain } = useNetwork();
@@ -36,7 +36,7 @@ export function MainPanel({ locked, setLocked }) {
       if (!isFetched || !oracle.isFetched) return 0n; // || data.gasPrice === null
       const l1GasPrice = oracle.data;
       const l1DataFee = l1GasPrice * BigInt(Math.ceil((txDataGas + FIXED_OVERHEAD) * DYNAMIC_OVERHEAD));
-      const l2ExecutionFee = data.lastBaseFeePerGas * l2Gas;
+      const l2ExecutionFee = data.gasPrice * l2Gas;
       return l1DataFee + l2ExecutionFee;
     },
   };
