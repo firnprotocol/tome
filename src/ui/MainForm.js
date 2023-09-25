@@ -73,8 +73,8 @@ export function MainForm({ locked, setLocked, calculators }) {
           || helper.length > 0
           || display === ""
         }
-        pendingLabel="ANONYMOUSLY BROADCASTING"
-        label={<>ANONYMOUSLY BROADCAST <PaperAirplaneIcon className={BTN_ICON_CLASSNAME}/></>}
+        pendingLabel="BROADCASTING ANONYMOUSLY"
+        label={<>BROADCAST ANONYMOUSLY <PaperAirplaneIcon className={BTN_ICON_CLASSNAME}/></>}
         onClick={() => {
           return initiateBroadcast({
             setDisplay,
