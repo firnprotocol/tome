@@ -19,8 +19,8 @@
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.2.0",
     "react-router-dom": "^5.2.0",
-    "viem": "^1.10.1",
-    "wagmi": "^1.4.1"
+    "viem": "^1.14.0",
+    "wagmi": "^1.4.2"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
