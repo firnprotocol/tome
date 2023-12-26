@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useConfig, useSwitchChain } from "wagmi";
 import { Popover } from "@headlessui/react";
 
 import { CHAIN_PARAMS } from "constants/networks";
@@ -7,28 +7,10 @@ import QUESTION_ICON from "assets/icons/question.svg";
 
 
 export function NetworkDropdownMenu({ locked, children, switching, setSwitching }) {
-  const { chain } = useNetwork();
-  const { chains, switchNetwork } = useSwitchNetwork({
-    onMutate(args) {
-      setSwitching(true);
-    },
-    onSettled(data, error) {
-      setSwitching(false);
-    },
-    onError(error) {
-      console.error(error);
-      if (error.code === 4001)
-        toast.error("You declined the chain switch request.");
-      else if (error.code === 4902) // last is for Opera
-        toast.error("You must manually add this network, in your wallet's settings, before you can switch to it.");
-      else if (error.message === "MetaMask not installed")
-        toast.error("Wallet extension not detected!");
-      else if (error.message === "Connector already connected")
-        toast("You're already connected to this network.");
-      else
-        toast.error("An unknown error occurred.");
-    }
-  });
+  const config = useConfig();
+
+  const { chain } = useAccount();
+  const { chains, switchChainAsync } = useSwitchChain(config);
   const id = chain?.id;
 
   return (
@@ -43,10 +25,10 @@ export function NetworkDropdownMenu({ locked, children, switching, setSwitching 
           <small className="text-slate-500">CURRENT NETWORK</small>
           <div className="text-cyan-600 flex justify-between items-center py-1 md:justify-start md:space-x-2">
             <div className="flex justify-start flex-1">
-              {chain === undefined || chain.unsupported ? "Unknown" : CHAIN_PARAMS[chain.name].name}
+              {chain === undefined ? "Unknown" : CHAIN_PARAMS[chain.name].name}
             </div>
             <img
-              src={chain === undefined || chain.unsupported ? QUESTION_ICON : CHAIN_PARAMS[chain.name].image}
+              src={chain === undefined ? QUESTION_ICON : CHAIN_PARAMS[chain.name].image}
               className="h-5 w-5"
             />
           </div>
@@ -61,11 +43,20 @@ export function NetworkDropdownMenu({ locked, children, switching, setSwitching 
                   toast("You're already connected to this network.");
                   return;
                 }
-                if (!switchNetwork) {
-                  toast.error("Please connect your wallet first.");
-                  return;
-                }
-                switchNetwork(chain.id);
+                setSwitching(true);
+                switchChainAsync({ chainId: chain.id }).catch((error) => {
+                  console.error(error);
+                  if (error.code === 4001)
+                    toast.error("You declined the chain switch request.");
+                  else if (error.code === 4902) // last is for Opera
+                    toast.error("You must manually add this network, in your wallet's settings, before you can switch to it.");
+                  else if (error.shortMessage === "Chain not configured.")
+                    toast.error("Please connect a wallet first."); // this happens in incognito when nothing is connected
+                  else
+                    toast.error("An unknown error occurred.");
+                }).finally(() => {
+                  setSwitching(false);
+                });
               }}
             >
               <div className="flex justify-between items-center py-1 md:justify-start md:space-x-2">

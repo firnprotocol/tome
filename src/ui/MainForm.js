@@ -4,7 +4,7 @@ import { Card } from "tw/Card";
 
 import { SubmitTxButton } from "components/SubmitTxButton";
 import { MessageField } from "components/MessageField";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { optimismTxDataGas } from "utils/gas";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { useInitiateBroadcast } from "hooks/useInitiateBroadcast";
@@ -17,8 +17,7 @@ const WITHDRAWAL_GAS = 3750000n;
 const WITHDRAWAL_TX_DATA_GAS = 46500;
 
 export function MainForm({ locked, setLocked, calculators }) {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const { address, chain } = useAccount();
 
   const [display, setDisplay] = useState("");
 
@@ -38,7 +37,7 @@ export function MainForm({ locked, setLocked, calculators }) {
   }
 
   let helper = "";
-  if (chain === undefined || chain.unsupported)
+  if (chain === undefined)
     helper = "Please connect your wallet to a supported network.";
   // will need an error case for non-flask.
   else if (display === "")

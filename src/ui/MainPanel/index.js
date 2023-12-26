@@ -1,4 +1,5 @@
-import { useContractRead, useFeeData, useNetwork } from "wagmi";
+import { useAccount, useBlockNumber, useEstimateFeesPerGas, useReadContract } from "wagmi";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Grid } from "tw/Grid";
 
@@ -6,39 +7,45 @@ import { ADDRESSES } from "constants/addresses";
 import { ORACLE_ABI } from "constants/abis";
 import { MainForm } from "ui/MainForm";
 import { MessageLog } from "ui/MainPanel/MessageLog";
+import { useEffect } from "react";
 
 
 const FIXED_OVERHEAD = 188;
 const DYNAMIC_OVERHEAD = 0.684;
 
 export function MainPanel({ locked, setLocked }) {
-  const { chain } = useNetwork();
+  const queryClient = useQueryClient();
 
-  const { data, isFetched } = useFeeData({
-    watch: !locked,
-    onError(error) {
-      console.error(error);
-    },
-  });
-  const oracle = useContractRead({
+  const { chain } = useAccount();
+
+  const { data: blockNumber } = useBlockNumber({ watch: true });
+  const { data, isFetched, queryKey } = useEstimateFeesPerGas();
+
+  const oracle = useReadContract({
     address: ADDRESSES["Base"].ORACLE,
     abi: ORACLE_ABI,
     functionName: "l1BaseFee",
     enabled: chain?.name === "Base", // kosher to have this inside?
-    watch: !locked, // is this kosh?!?!? would be incredible if it was.
     onError(error) {
       console.error(error);
     },
   });
 
+  useEffect(() => {
+    if (!locked) {
+      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: oracle.queryKey }); // (oracle)
+    } // refresh balance on every block?
+  }, [blockNumber, locked]);
+
   const calculators = {
     "Base": (l2Gas, txDataGas) => {
       if (!isFetched || !oracle.isFetched) return 0n; // || data.gasPrice === null
-      const l1GasPrice = oracle.data;
-      const l1DataFee = l1GasPrice * BigInt(Math.ceil((txDataGas + FIXED_OVERHEAD) * DYNAMIC_OVERHEAD));
-      const l2ExecutionFee = data.gasPrice * l2Gas;
+      const l1BaseFee = oracle.data;
+      const l1DataFee = l1BaseFee * BigInt(Math.ceil((txDataGas + FIXED_OVERHEAD) * DYNAMIC_OVERHEAD));
+      const l2ExecutionFee = data.maxFeePerGas * l2Gas;
       return l1DataFee + l2ExecutionFee;
-    },
+    }
   };
 
   return (

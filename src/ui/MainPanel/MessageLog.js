@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useContractEvent } from "wagmi";
+import { useConfig, useWatchContractEvent } from "wagmi";
+import { getBlock, getPublicClient } from "wagmi/actions";
 
 import { formatDistanceTimestamp } from "utils/datetime";
 import { OrderedMutex } from "utils/mutex";
@@ -9,26 +10,24 @@ import { Card } from "tw/Card";
 import { Grid } from "tw/Grid";
 import { ADDRESSES } from "constants/addresses";
 import { TOME_ABI } from "constants/abis";
-import { getPublicClient } from "wagmi/actions";
 import { decodeEventLog } from "viem";
 import { CHAIN_PARAMS } from "constants/networks";
+import { base } from "viem/chains";
 
 
 export function MessageLog() {
+  const config = useConfig();
+  const publicClient = getPublicClient(config, {
+    chainId: base.id,
+  });
+
   const [pairs, setPairs] = useState([]);
   const [done, setDone] = useState(false);
-
-  const publicClient = getPublicClient();
-  // what if they're on the wrong chain...?
-
-  const fetchBlock = async (configuration) => {
-    return await publicClient.getBlock(configuration);
-  };
 
   const mutex = new OrderedMutex();
 
   useEffect(() => {
-    fetchBlock("latest").then((block) => {
+    getBlock(config).then((block) => {
       const retrieve = async (i) => {
         const logs = await publicClient.getLogs({
           address: ADDRESSES["Base"].TOME,
@@ -42,7 +41,7 @@ export function MessageLog() {
             abi: TOME_ABI,
             ...log,
           });
-          return fetchBlock({ blockNumber: log.blockNumber }).then((block) => {
+          return getBlock(config, { blockNumber: log.blockNumber }).then((block) => {
             return { ...log, args: topics.args, timestamp: Number(block.timestamp) }; // push to back of log.
           }); // .catch((error) => {}); ???
         }));
@@ -60,14 +59,14 @@ export function MessageLog() {
     });
   }, []);
 
-  useContractEvent({
-    // TODO: do i need to decode the log...?
+  useWatchContractEvent({
     address: ADDRESSES["Base"].TOME,
     abi: TOME_ABI,
     eventName: "Broadcast",
-    listener(logs) {
+    chainId: base.id,
+    onLogs(logs) {
       logs.forEach((log) => {
-        fetchBlock({ blockNumber: log.blockNumber }).then((block) => {
+        getBlock(config, { blockNumber: log.blockNumber }).then((block) => {
           setPairs((pairs) => [{ ...log, timestamp: Number(block.timestamp) }, ...pairs]);
         }); // .catch((error) => {}); ???
       });

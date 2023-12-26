@@ -1,62 +1,30 @@
 import { Popover } from "@headlessui/react";
 
 import toast from "react-hot-toast";
-import { useAccount, useConnect, useNetwork } from "wagmi";
+import { useAccount, useConnect } from "wagmi";
 
-import { WALLETS } from "constants/wallets";
 import QUESTION_ICON from "assets/icons/question.svg";
+import METAMASK_ICON from "assets/icons/metamask.svg";
+
+
+const IMAGES = {
+  "MetaMask": METAMASK_ICON,
+};
 
 
 function getWalletStyle(name) {
   switch (name) {
     case "MetaMask":
       return "hover:!border-orange-500";
-    case "Coinbase Wallet":
-      return "hover:!border-blue-500";
-    case "WalletConnect":
-      return "hover:!border-sky-500";
     default:
       return "";
   }
 }
 
-export function getWalletHoverShadow(name) {
-  switch (name) {
-    case "MetaMask":
-      return "shadow-orange-lg hover:!shadow-orange-2xl";
-    case "Coinbase Wallet":
-      return "shadow-blue-lg hover:!shadow-blue-2xl";
-    case "WalletConnect":
-      return "shadow-sky-lg hover:!shadow-sky-2xl";
-    default:
-      return "";
-  }
-}
 
 export function WalletDropdownMenu({ locked, switching, setSwitching }) {
-  const { address, connector } = useAccount(); // undef?
-  const { chain } = useNetwork();
-  const { connect, connectors } = useConnect({ // isLoading
-    onMutate(args) {
-      setSwitching(true);
-    },
-    onSettled(data, error) {
-      setSwitching(false);
-    },
-    onError(error) {
-      console.error(error);
-      if (error.code === 4001 || error.message === "Connection request reset. Please try again.") // latter for: close walletconnect prompt
-        toast.error("You rejected the wallet connection request.");
-      else if (error.message === "Connector not found")
-        toast.error("Wallet extension not detected!");
-      else if (error.message === "Connector already connected")
-        toast("You're already connected to this wallet.");
-      else if (error.code === -32000) // happens when you activate walletconnect with an unknown chain!
-        toast.error("You must manually add this network, in your wallet's settings, before you can switch to it.");
-      else
-        toast.error("An unknown error occurred.");
-    },
-  });
+  const { address, chain, connector } = useAccount(); // undef?
+  const { connectAsync, connectors } = useConnect();
 
   return (
     <Popover className="relative">
@@ -81,7 +49,6 @@ export function WalletDropdownMenu({ locked, switching, setSwitching }) {
           hover:bg-zinc-900
           disabled:!bg-zinc-900
           ${getWalletStyle(connector?.name)}
-          ${getWalletHoverShadow(connector?.name)}
           shadow-indigo-sm flex-shrink rounded-md
           text-sm
         `}
@@ -91,8 +58,8 @@ export function WalletDropdownMenu({ locked, switching, setSwitching }) {
             className={`
               inline-block rounded-md
               text-gray-400 group-hover:text-gray-300
-              px-0.5 py-2 group-hover:bg-opacity-10 bg-gray-900 tracking-wide font-light
-              bg-opacity-20 font-telegrama align-middle
+              bg-opacity-30 px-0.5 py-2 group-hover:bg-opacity-10 bg-gray-900 tracking-wide font-light
+              font-telegrama align-middle
             `}
           >
             {address ?
@@ -104,9 +71,9 @@ export function WalletDropdownMenu({ locked, switching, setSwitching }) {
             }
           </div>
           <div className="inline-block rounded-md pt-2 pr-2">
-            {connector ?
+            {connector && IMAGES[connector.name] ?
               <img
-                src={WALLETS[connector.name].image}
+                src={IMAGES[connector.name]}
                 className="inline-block w-4 h-4 text-white opacity-80 group-hover:opacity-100"
               /> :
               <img
@@ -127,8 +94,8 @@ export function WalletDropdownMenu({ locked, switching, setSwitching }) {
                 `${address.slice(0, 6)}...${address.slice(-4)}`
               }
             </div>
-            {address && connector && <img
-              src={WALLETS[connector.name].image}
+            {address && connector && IMAGES[connector.name] && <img
+              src={IMAGES[connector.name]}
               className="h-5 w-5"
             />
             }
@@ -139,13 +106,26 @@ export function WalletDropdownMenu({ locked, switching, setSwitching }) {
             <Popover.Button
               className="text-left p-2 w-full text-slate-400 hover:text-slate-300 hover:bg-zinc-900 font-telegrama text-sm rounded"
               onClick={() => {
-                connect({ connector, chainId: chain?.id }); // can be undef when not connected
+                setSwitching(true);
+                connectAsync({ connector, chainId: chain?.id }).catch((error) => {
+                  console.error(error);
+                  if (error.code === 4001 || error.message === "Connection request reset. Please try again.") // latter for: close walletconnect prompt
+                    toast.error("You rejected the wallet connection request.");
+                  else if (error.shortMessage === "Connector already connected.")
+                    toast("You're already connected to this wallet.");
+                  else if (error.code === -32000) // happens when you activate walletconnect with an unknown chain!
+                    toast.error("You must manually add this network, in your wallet's settings, before you can switch to it.");
+                  else
+                    toast.error("An unknown error occurred.");
+                }).finally(() => {
+                  setSwitching(false);
+                });
               }}
             >
               <div className="flex justify-between items-center py-1 md:justify-start md:space-x-2">
                 <div className="flex justify-start flex-1">{connector.name}</div>
                 <img
-                  src={WALLETS[connector.name].image}
+                  src={IMAGES[connector.name] ?? QUESTION_ICON}
                   className="h-5 w-5"
                 />
               </div>

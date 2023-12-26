@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount, useConfig } from "wagmi";
+import { getPublicClient } from "wagmi/actions";
 
 import { ExplorerLink } from "components/ExplorerLink";
 import { ADDRESSES } from "constants/addresses";
@@ -8,15 +9,15 @@ import { ADDRESSES } from "constants/addresses";
 const defaultSnapOrigin = "npm:@firnprotocol/snap" // "local:http://localhost:8080"
 
 export function useInitiateBroadcast() {
-  const { chain } = useNetwork();
-  const { connector } = useAccount();
+  const config = useConfig();
+  const { chain } = useAccount();
 
   async function initiateBroadcast({ setDisplay, setLocked, data, tip }) {
     setLocked(true);
 
     try {
-      const provider = connector.options.getProvider();
-      const clientVersion = await provider.request({
+      const publicClient = await getPublicClient(config);
+      const clientVersion = await publicClient.request({
         method: "web3_clientVersion",
       });
       const isFlaskDetected = clientVersion.includes("flask");
@@ -29,7 +30,7 @@ export function useInitiateBroadcast() {
       });
       const snapPresent = Object.values(snaps).find((snap) => snap.id === defaultSnapOrigin);
       if (!snapPresent)
-        await provider.request({
+        await publicClient.request({
           method: "wallet_requestSnaps",
           params: { [defaultSnapOrigin]: {} },
         });

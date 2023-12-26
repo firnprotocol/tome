@@ -1,10 +1,10 @@
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 
 import { CHAIN_PARAMS } from "constants/networks";
 
 
 export function ExplorerLink({ hash, children, className }) {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   return (
     <a
       href={`${CHAIN_PARAMS[chain?.name]?.blockExplorerUrl}/tx/${hash}`}

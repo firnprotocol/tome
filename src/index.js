@@ -1,40 +1,42 @@
 import "./index.css";
 import "./assets/telegrama.woff2";
 
-import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { publicProvider } from "wagmi/providers/public";
-import { alchemyProvider } from "wagmi/providers/alchemy";
-import { base } from "viem/chains";
-import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { createRoot } from "react-dom/client";
+
+import { http } from "viem";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createConfig, fallback, unstable_connector, WagmiProvider } from "wagmi";
+import { base } from "viem/chains";
+import { injected, metaMask } from "wagmi/connectors";
 
 import { CustomToaster } from "components/toasts/CustomToaster";
 
 import { App } from "./App";
 
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [base],
-  [alchemyProvider({ apiKey: "WM5ly1JW2TrWhk8byZfTt2cpRVTpRUnw" }), publicProvider()],
-);
+const queryClient = new QueryClient();
 
 const config = createConfig({
-  autoConnect: true,
-  publicClient,
-  webSocketPublicClient,
-  connectors: [
-    new MetaMaskConnector({
-      chains
-    }),
-  ],
+  chains: [base],
+  transports: {
+    [base.id]: fallback([
+      unstable_connector(injected),
+      http("https://1rpc.io/4qUmg7L19yZ9fxzGv/base"),
+      http("https://base-mainnet.g.alchemy.com/v2/WM5ly1JW2TrWhk8byZfTt2cpRVTpRUnw"),
+      http(),
+    ]),
+  },
 });
+
 
 function Main() {
   return (
-    <WagmiConfig config={config}>
-      <App/>
-      <CustomToaster/>
-    </WagmiConfig>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <CustomToaster/>
+        <App/>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { watchAccount, watchNetwork } from "wagmi/actions";
+import { useAccount } from "wagmi";
 
 import { Grid } from "tw/Grid";
 
@@ -11,35 +11,30 @@ import toast from "react-hot-toast";
 
 
 export function App() {
+  const { address, chain } = useAccount();
+
   const [locked, setLocked] = useState(false);
   const [switching, setSwitching] = useState(false);
 
   // really the below two useEffects can (apparently) go essentially anywhere.
-  useEffect(() => {
-    const unwatch = watchNetwork(({ chain }) => {
-      if (chain === undefined) toast.error("Your wallet has been disconnected.");
-      else if (chain.unsupported) toast.error("Switched to an unsupported chain.");
-      else
-        toast(
-          <span>
+  useEffect(() => { // watchChainId
+    if (chain === undefined) toast.error("Switched to an unsupported chain."); // Your wallet has been disconnected.
+    else
+      toast(
+        <span>
             Switched the chain to <b>{chain.name}</b>.
           </span>
-        );
-    });
-    return () => { unwatch(); };
-  }, []);
+      );
+  }, [chain]);
 
-  useEffect(() => {
-    const unwatch = watchAccount(({ address }) => {
-      if (address)
-        toast(
-          <span>
-            Switched account to <code>{address.slice(0, 6)}...{address.slice(-4)}</code>.
-          </span>
-        );
-    });
-    return () => { unwatch(); };
-  }, []);
+  useEffect(() => { // watchAccount
+    if (address)
+      toast(
+        <span>
+          Switched account to <code>{address.slice(0, 6)}...{address.slice(-4)}</code>.
+        </span>
+      );
+  }, [address]);
 
   return (
     <div className="text-slate-400 bg-stone-800 min-h-screen overflow-hidden">

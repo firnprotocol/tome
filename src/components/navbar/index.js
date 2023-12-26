@@ -1,4 +1,4 @@
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 
 import TOME_ICON from "assets/tome.svg";
 import QUESTION_ICON from "assets/icons/question.svg";
@@ -9,7 +9,7 @@ import { WalletDropdownMenu } from "components/navbar/WalletDropdownMenu";
 
 
 export function NavBar({ locked, switching, setSwitching }) {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
 
   return (
     <div className="flex justify-between items-center py-1 md:justify-start md:space-x-2">
