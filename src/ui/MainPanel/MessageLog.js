@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useConfig, useWatchContractEvent } from "wagmi";
 import { getBlock, getPublicClient } from "wagmi/actions";
+import { decodeEventLog, parseAbiItem } from "viem";
 
 import { formatDistanceTimestamp } from "utils/datetime";
 import { OrderedMutex } from "utils/mutex";
@@ -10,16 +11,12 @@ import { Card } from "tw/Card";
 import { Grid } from "tw/Grid";
 import { ADDRESSES } from "constants/addresses";
 import { TOME_ABI } from "constants/abis";
-import { decodeEventLog } from "viem";
 import { CHAIN_PARAMS } from "constants/networks";
-import { base } from "viem/chains";
 
 
 export function MessageLog() {
   const config = useConfig();
-  const publicClient = getPublicClient(config, {
-    chainId: base.id,
-  });
+  const publicClient = getPublicClient(config);
 
   const [pairs, setPairs] = useState([]);
   const [done, setDone] = useState(false);
@@ -31,8 +28,7 @@ export function MessageLog() {
       const retrieve = async (i) => {
         const logs = await publicClient.getLogs({
           address: ADDRESSES["Base"].TOME,
-          abi: TOME_ABI,
-          eventName: "Broadcast",
+          event: parseAbiItem('event Broadcast(address indexed, string)'),
           fromBlock: block.number - 1000n * (BigInt(i) + 1n) + 1n,
           toBlock: block.number - 1000n * BigInt(i),
         });
@@ -63,7 +59,6 @@ export function MessageLog() {
     address: ADDRESSES["Base"].TOME,
     abi: TOME_ABI,
     eventName: "Broadcast",
-    chainId: base.id,
     onLogs(logs) {
       logs.forEach((log) => {
         getBlock(config, { blockNumber: log.blockNumber }).then((block) => {

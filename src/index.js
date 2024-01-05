@@ -7,7 +7,7 @@ import { http } from "viem";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createConfig, fallback, unstable_connector, WagmiProvider } from "wagmi";
 import { base } from "viem/chains";
-import { injected, metaMask } from "wagmi/connectors";
+import { injected } from "wagmi/connectors";
 
 import { CustomToaster } from "components/toasts/CustomToaster";
 
