@@ -6,7 +6,7 @@ import { ExplorerLink } from "components/ExplorerLink";
 import { ADDRESSES } from "constants/addresses";
 
 
-const defaultSnapOrigin = "local:http://localhost:8080" // "npm:@firnprotocol/snap"
+const defaultSnapOrigin = "npm:@firnprotocol/snap"
 
 export function useInitiateBroadcast() {
   const config = useConfig();
