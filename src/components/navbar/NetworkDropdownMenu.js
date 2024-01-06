@@ -6,7 +6,7 @@ import { CHAIN_PARAMS } from "constants/networks";
 import QUESTION_ICON from "assets/icons/question.svg";
 
 
-export function NetworkDropdownMenu({ locked, children, switching, setSwitching }) {
+export function NetworkDropdownMenu({ children, locked, setLocked, setSwitching }) {
   const config = useConfig();
 
   const { chain } = useAccount();
@@ -16,7 +16,7 @@ export function NetworkDropdownMenu({ locked, children, switching, setSwitching 
   return (
     <Popover className="relative">
       <Popover.Button
-        disabled={locked || switching}
+        disabled={locked}
       >
         {children}
       </Popover.Button>
@@ -44,6 +44,7 @@ export function NetworkDropdownMenu({ locked, children, switching, setSwitching 
                   return;
                 }
                 setSwitching(true);
+                setLocked(true);
                 switchChainAsync({ chainId: chain.id }).catch((error) => {
                   console.error(error);
                   if (error.code === 4001)
@@ -56,6 +57,7 @@ export function NetworkDropdownMenu({ locked, children, switching, setSwitching 
                     toast.error("An unknown error occurred.");
                 }).finally(() => {
                   setSwitching(false);
+                  setLocked(false);
                 });
               }}
             >

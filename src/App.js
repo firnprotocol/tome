@@ -14,7 +14,6 @@ export function App() {
   const { address, chain } = useAccount();
 
   const [locked, setLocked] = useState(false);
-  const [switching, setSwitching] = useState(false);
 
   // really the below two useEffects can (apparently) go essentially anywhere.
   useEffect(() => { // watchChainId
@@ -39,7 +38,7 @@ export function App() {
   return (
     <div className="text-slate-400 bg-stone-800 min-h-screen overflow-hidden">
       <NavBar
-        {...{ locked, switching, setSwitching }}
+        {...{ locked, setLocked }}
       />
       <StandardPageContainer>
         <Grid

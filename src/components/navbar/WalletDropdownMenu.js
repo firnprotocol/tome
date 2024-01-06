@@ -4,12 +4,6 @@ import toast from "react-hot-toast";
 import { useAccount, useConnect } from "wagmi";
 
 import QUESTION_ICON from "assets/icons/question.svg";
-import METAMASK_ICON from "assets/icons/metamask.svg";
-
-
-const IMAGES = {
-  "MetaMask": METAMASK_ICON,
-};
 
 
 function getWalletStyle(name) {
@@ -21,6 +15,9 @@ function getWalletStyle(name) {
   }
 }
 
+function getImage(connector) {
+  return connector?.icon ?? QUESTION_ICON;
+}
 
 export function WalletDropdownMenu({ locked, switching, setSwitching }) {
   const { address, chain, connector } = useAccount(); // undef?
@@ -71,16 +68,10 @@ export function WalletDropdownMenu({ locked, switching, setSwitching }) {
             }
           </div>
           <div className="inline-block rounded-md pt-2 pr-2">
-            {connector && IMAGES[connector.name] ?
-              <img
-                src={IMAGES[connector.name]}
-                className="inline-block w-4 h-4 text-white opacity-80 group-hover:opacity-100"
-              /> :
-              <img
-                src={QUESTION_ICON}
-                className="inline-block w-4 h-4 text-white opacity-50 group-hover:opacity-100"
-              />
-            }
+            <img
+              src={getImage(connector)}
+              className="inline-block w-4 h-4 text-white opacity-50 group-hover:opacity-100"
+            />
           </div>
         </div>
       </Popover.Button>
@@ -94,11 +85,10 @@ export function WalletDropdownMenu({ locked, switching, setSwitching }) {
                 `${address.slice(0, 6)}...${address.slice(-4)}`
               }
             </div>
-            {address && connector && IMAGES[connector.name] && <img
-              src={IMAGES[connector.name]}
+            <img  // address && ?
+              src={getImage(connector)}
               className="h-5 w-5"
             />
-            }
           </div>
         </div>
         {connectors.map((connector, index) => // shadows
@@ -125,7 +115,7 @@ export function WalletDropdownMenu({ locked, switching, setSwitching }) {
               <div className="flex justify-between items-center py-1 md:justify-start md:space-x-2">
                 <div className="flex justify-start flex-1">{connector.name}</div>
                 <img
-                  src={IMAGES[connector.name] ?? QUESTION_ICON}
+                  src={getImage(connector)}
                   className="h-5 w-5"
                 />
               </div>

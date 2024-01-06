@@ -6,10 +6,13 @@ import { NetworkDropdownMenu } from "components/navbar/NetworkDropdownMenu";
 import { CHAIN_PARAMS } from "constants/networks";
 import { ButtonLoadingSpinner } from "components/loading/ButtonLoadingSpinner";
 import { WalletDropdownMenu } from "components/navbar/WalletDropdownMenu";
+import { useState } from "react";
 
 
-export function NavBar({ locked, switching, setSwitching }) {
+export function NavBar({ locked, setLocked }) {
   const { chain } = useAccount();
+
+  const [switching, setSwitching] = useState(false);
 
   return (
     <div className="flex justify-between items-center py-1 md:justify-start md:space-x-2">
@@ -24,17 +27,17 @@ export function NavBar({ locked, switching, setSwitching }) {
         </span>
       </div>
       <div className="pl-2 pr-5 pt-2.5 pb-1">
-        <NetworkDropdownMenu {...{ locked, switching, setSwitching }}>
+        <NetworkDropdownMenu {...{ locked, setLocked, setSwitching }}>
           {switching ?
             <ButtonLoadingSpinner className="h-7 w-7 -mt-2.5"/> :
             <img
-              src={chain === undefined || chain.unsupported ? QUESTION_ICON : CHAIN_PARAMS[chain.name].image}
+              src={chain === undefined ? QUESTION_ICON : CHAIN_PARAMS[chain.name].image}
               className="h-7 w-7"
             />
           }
         </NetworkDropdownMenu>
       </div>
-      <WalletDropdownMenu {...{ locked, switching, setSwitching }} />
+      <WalletDropdownMenu {...{ locked, setLocked, switching, setSwitching }} />
       <div className="pl-3 pr-5 py-3">
         <img src={TOME_ICON} className="h-7 w-7"/>
       </div>
