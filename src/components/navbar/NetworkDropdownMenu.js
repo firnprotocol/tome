@@ -9,7 +9,7 @@ import QUESTION_ICON from "assets/icons/question.svg";
 export function NetworkDropdownMenu({ children, locked, setLocked, setSwitching }) {
   const config = useConfig();
 
-  const { chain } = useAccount();
+  const { chain, connector } = useAccount();
   const { chains, switchChainAsync } = useSwitchChain(config);
   const id = chain?.id;
 
@@ -41,6 +41,10 @@ export function NetworkDropdownMenu({ children, locked, setLocked, setSwitching 
                 // could consider setLocked while chain switching...?
                 if (chain.id === id) {
                   toast("You're already connected to this network.");
+                  return;
+                }
+                if (!connector) {
+                  toast("Please connect a wallet first.");
                   return;
                 }
                 setSwitching(true);
