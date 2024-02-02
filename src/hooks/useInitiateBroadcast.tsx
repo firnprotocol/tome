@@ -10,21 +10,15 @@ const defaultSnapOrigin = "npm:@firnprotocol/snap"
 
 export function useInitiateBroadcast() {
   const config = useConfig();
-  const { chain } = useAccount();
+  const { chain, connector } = useAccount();
 
   async function initiateBroadcast({ setDisplay, setLocked, data, tip }) {
     setLocked(true);
 
     try {
+      if (connector.name !== "MetaMask")
+        throw { message: "Not MetaMask" };
       const publicClient = await getPublicClient(config);
-      const clientVersion = await publicClient.request({
-        method: "web3_clientVersion",
-      });
-      const isFlaskDetected = clientVersion.includes("flask");
-      if (!isFlaskDetected) {
-        throw { message: "No Flask" };
-      }
-
       const snaps = await window.ethereum.request({
         method: "wallet_getSnaps",
       });
@@ -60,13 +54,13 @@ export function useInitiateBroadcast() {
     } catch (error) {
       // todo: what happens when they decline the prompt?
       console.error(error);
-      if (error.message === "User rejected the request.") // ??????
+      if (error.details === "User rejected the request.") // ??????
         toast.error("You declined the prompt.");
-      else if (error.message === "No Flask")
+      else if (error.message === "Not MetaMask")
         toast.error(<span>
           Tome currently only works with <span className="underline"><a href="https://metamask.io/flask/"
                                                                         target="_blank">MetaMask <span
-          className="italic">Flask</span></a></span>! Standard MetaMask support is coming soon.
+          className="italic">Flask</span></a></span>!
         </span>);
       else if (error.message === "Insufficient balance for transaction.")
         toast.error(

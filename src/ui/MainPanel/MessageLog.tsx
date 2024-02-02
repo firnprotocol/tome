@@ -5,7 +5,7 @@ import { decodeEventLog, parseAbiItem } from "viem";
 
 import { formatDistanceTimestamp } from "@utils/datetime";
 import { OrderedMutex } from "@utils/mutex";
-import { ButtonLoadingSpinner } from "components/loading/ButtonLoadingSpinner";
+import { LoadingSpinner } from "components/loading/LoadingSpinner";
 
 import { Card } from "@tw/Card";
 import { Grid } from "@tw/Grid";
@@ -73,7 +73,7 @@ export function MessageLog() {
       <div className="pt-2 text-stone-700 text-sm flex">
         {done ?
           <span>Past messages retrieved.</span> :
-          <span>Retrieving past messages... <ButtonLoadingSpinner className="!h-3.5 !w-3.5 mb-1 !opacity-100"/></span>
+          <span>Retrieving past messages... <LoadingSpinner className="!h-3.5 !w-3.5 mb-1"/></span>
         }
       </div>
       <Grid
