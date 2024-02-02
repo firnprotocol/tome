@@ -1,0 +1,9 @@
+export const DOCS_URL = "https://firn.cash/whitepaper.pdf";
+export const GITBOOK_URL = "https://docs.firn.cash";
+export const MEDIUM_URL = "https://medium.com/@firnprotocol";
+export const DISCORD_URL = "https://discord.gg/2TPJE7CMdu";
+export const TELEGRAM_URL = "#";
+export const EMAIL_URL = "mailto:firnprotocol@proton.me";
+export const TWITTER_URL = "https://twitter.com/firnprotocol";
+export const GITHUB_URL = "https://github.com/firnprotocol";
+export const REDDIT_URL = "https://www.reddit.com/r/firnprotocol/";
