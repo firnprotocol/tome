@@ -18,10 +18,7 @@ export function MainPanel({ locked, setLocked }) {
 
   const { chain } = useAccount();
 
-  const { data: blockNumber } = useBlockNumber({ watch: {
-    enabled: true,
-    pollingInterval: 20000
-  }});
+  const { data: blockNumber } = useBlockNumber({ watch: true});
   const { data, isFetched, queryKey } = useEstimateFeesPerGas();
 
   const oracle = useReadContract({

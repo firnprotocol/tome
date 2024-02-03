@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { toHex, http } from "viem";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
+import { http, webSocket } from "viem";
 import { useAccount, createConfig, fallback, unstable_connector, WagmiProvider } from "wagmi";
 import { CustomToaster } from "@components/toasts/CustomToaster";
-import toast from "react-hot-toast";
 import { base } from "viem/chains";
 import { injected, walletConnect } from "wagmi/connectors";
 
@@ -66,12 +66,14 @@ const queryClient = new QueryClient();
 
 const config = createConfig({
   chains: [base],
+  pollingInterval: 15_000,
   connectors: [
     walletConnect({ projectId: "7e98ab877dc43e11739016143ae3416e" })
   ],
   transports: {
     [base.id]: fallback([
-      http("https://base-mainnet.g.alchemy.com/v2/WM5ly1JW2TrWhk8byZfTt2cpRVTpRUnw"),
+      webSocket("wss://base-mainnet.g.alchemy.com/v2/KsgLWxVs5GgMkAdrgjxL9R2x-eMamu26"),
+      http("http://base-mainnet.g.alchemy.com/v2/KsgLWxVs5GgMkAdrgjxL9R2x-eMamu26"),
       http("https://1rpc.io/4qUmg7L19yZ9fxzGv/base"),
       http(),
       unstable_connector(injected),
