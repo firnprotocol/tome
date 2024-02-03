@@ -66,7 +66,7 @@ const queryClient = new QueryClient();
 
 const config = createConfig({
   chains: [base],
-  pollingInterval: 15_000,
+  pollingInterval: 10000,
   connectors: [
     walletConnect({ projectId: "7e98ab877dc43e11739016143ae3416e" })
   ],
