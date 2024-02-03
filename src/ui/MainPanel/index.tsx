@@ -18,14 +18,17 @@ export function MainPanel({ locked, setLocked }) {
 
   const { chain } = useAccount();
 
-  const { data: blockNumber } = useBlockNumber({ watch: true });
+  const { data: blockNumber } = useBlockNumber({ watch: {
+    enabled: true,
+    pollingInterval: 20000
+  }});
   const { data, isFetched, queryKey } = useEstimateFeesPerGas();
 
   const oracle = useReadContract({
     address: ADDRESSES["Base"].ORACLE,
     abi: ORACLE_ABI,
     functionName: "l1BaseFee",
-    enabled: chain?.name === "Base", // kosher to have this inside?
+    query: { enabled: chain?.name === "Base" },
   });
 
   useEffect(() => {

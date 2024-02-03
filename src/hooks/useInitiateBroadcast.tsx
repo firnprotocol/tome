@@ -6,7 +6,7 @@ import { ExplorerLink } from "components/ExplorerLink";
 import { ADDRESSES } from "constants/addresses";
 
 
-const defaultSnapOrigin = "npm:@firnprotocol/snap"
+const defaultSnapOrigin = "npm:@firnprotocol/snap";
 
 export function useInitiateBroadcast() {
   const config = useConfig();
@@ -56,10 +56,14 @@ export function useInitiateBroadcast() {
       console.error(error);
       if (error.details === "User rejected the request.") // ??????
         toast.error("You declined the prompt.");
-      else if (error.message === "Not MetaMask" || error.message === "The method \"wallet_getSnaps\" does not exist / is not available.")
+      else if (
+        error.message === "Not MetaMask"
+        || error.message === "The method \"wallet_getSnaps\" does not exist / is not available."
+        // || error.message === "Request method wallet_getSnaps is not supported"
+      )
         toast.error(<span>
           Right now, Tome works only on desktop <span className="underline"><a href="https://metamask.io/flask/"
-                                                                        target="_blank">MetaMask Flask</a></span>.
+                                                                               target="_blank">MetaMask Flask</a></span>.
         </span>);
       else if (error.message === "Insufficient balance for transaction.")
         toast.error(

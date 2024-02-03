@@ -45,7 +45,11 @@ export function MessageLog() {
         setPairs((pairs) => pairs.concat(updates.reverse())); // concat entire list to front.
         mutex.release();
       };
-      return Promise.all(Array.from({ length: 50 }).map((_, i) => retrieve(i)));
+      return Promise.all(Array.from({ length: 50 }).map((_, i) => {
+        return new Promise((resolve) => { setTimeout(resolve, 5000 * (i >> 2)); }).then(() => {
+          return retrieve(i);
+        });
+      }));
     }).catch((error) => {
       console.error(error);
       // { code: -32005, message: "please limit the query to at most 1000 blocks } // seem to get this on coinbase mobile browser?
@@ -59,6 +63,7 @@ export function MessageLog() {
     address: ADDRESSES["Base"].TOME,
     abi: TOME_ABI,
     eventName: "Broadcast",
+    pollingInterval: 10000, // not fully tested whether this is doing anything.
     onLogs(logs) {
       logs.forEach((log) => {
         getBlock(config, { blockNumber: log.blockNumber }).then((block) => {
