@@ -24,7 +24,7 @@ export function MessageLog() {
   const mutex = new OrderedMutex();
 
   useEffect(() => {
-    getBlock(config).then((block) => {
+    getBlock(config).then(async (block) => {
       const retrieve = async (i) => {
         const logs = await publicClient.getLogs({
           address: ADDRESSES["Base"].TOME,
@@ -44,12 +44,11 @@ export function MessageLog() {
         await mutex.acquire(i);
         setPairs((pairs) => pairs.concat(updates.reverse())); // concat entire list to front.
         mutex.release();
-      };
-      return Promise.all(Array.from({ length: 50 }).map((_, i) => {
-        return new Promise((resolve) => { setTimeout(resolve, 5000 * (i >> 2)); }).then(() => {
-          return retrieve(i);
-        });
-      }));
+      }
+      for (let i = 0; i < 10; i++) {
+        await Promise.all(Array.from({ length: 5 }).map((_, j) => retrieve(i * 5 + j)));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
     }).catch((error) => {
       console.error(error);
       // { code: -32005, message: "please limit the query to at most 1000 blocks } // seem to get this on coinbase mobile browser?
