@@ -30,7 +30,7 @@ export function ToastContent({ toastData, message }) {
       className={`
         flex rounded
         min-w-[280px]
-        px-2 pt-1 pb-2
+        pl-2 pt-1 pb-2
         bg-zinc-900  transition-all
 
         border-2 border-zinc-600 hover:border-slate-100
