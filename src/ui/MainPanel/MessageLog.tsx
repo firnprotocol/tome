@@ -100,10 +100,9 @@ function MessageItem({ args, timestamp, transactionHash }) {
   const { message } = args; // todo: better handling for long messages
   return (
     <a href={`${CHAIN_PARAMS["Base"].blockExplorerUrl}/tx/${transactionHash}#eventlog`} target="_blank">
-      <div
-        className="font-telegrama bg-stone-900 p-2 border-2 border-slate-800 hover:border-orange-500 hover:shadow-slate-100/20 rounded-md">
-        <div className="text-sm inline pt-1">
-          <div className="inline float-right text-sm text-amber-500">
+      <div className="font-telegrama bg-stone-900 p-2 border-2 border-slate-800 hover:border-orange-500 hover:shadow-slate-100/20 rounded-md">
+        <div className="text-sm">
+          <div className="inline float-right text-amber-500">
             {formatDistanceTimestamp(Number(timestamp))}
           </div>
           {message}
