@@ -62,7 +62,6 @@ export function MessageLog() {
     address: ADDRESSES["Base"].TOME,
     abi: TOME_ABI,
     eventName: "Broadcast",
-    pollingInterval: 10000, // not fully tested whether this is doing anything.
     onLogs(logs) {
       logs.forEach((log) => {
         getBlock(config, { blockNumber: log.blockNumber }).then((block) => {
