@@ -5,7 +5,7 @@ import { Card } from "@tw/Card";
 import { SubmitTxButton } from "@components/SubmitTxButton";
 import { MessageField } from "@components/MessageField";
 import { useAccount } from "wagmi";
-import { optimismTxDataGas } from "utils/gas";
+import { optimismTxCompressedSize } from "utils/gas";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { useInitiateBroadcast } from "hooks/useInitiateBroadcast";
 import { encodeFunctionData, formatUnits } from "viem";
@@ -13,8 +13,8 @@ import { TOME_ABI } from "constants/abis";
 
 
 const BTN_ICON_CLASSNAME = "inline w-5 h-5 -mt-1";
-const WITHDRAWAL_GAS = 3750000n;
-const WITHDRAWAL_TX_DATA_GAS = 46500;
+export const WITHDRAWAL_GAS = 3850000n;
+const WITHDRAWAL_TX_COMPRESSED_SIZE = 2900n;
 
 export function MainForm({ locked, setLocked, calculators }) {
   const { address, chain } = useAccount();
@@ -32,8 +32,8 @@ export function MainForm({ locked, setLocked, calculators }) {
   let gas = 0n;
   if (chain?.name === "Base") {
     const l2Gas = WITHDRAWAL_GAS;
-    const txDataGas = WITHDRAWAL_TX_DATA_GAS + optimismTxDataGas(data);
-    gas = calculators["Base"](l2Gas, txDataGas);
+    const txCompressedSize = WITHDRAWAL_TX_COMPRESSED_SIZE + optimismTxCompressedSize(data);
+    gas = calculators["Base"](l2Gas, txCompressedSize);
   }
 
   let helper = "";

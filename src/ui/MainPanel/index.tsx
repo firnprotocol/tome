@@ -1,4 +1,4 @@
-import { useAccount, useBlockNumber, useEstimateFeesPerGas, useReadContract } from "wagmi";
+import { useAccount, useBlockNumber, useEstimateFeesPerGas, useReadContracts } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Grid } from "@tw/Grid";
@@ -10,8 +10,8 @@ import { MessageLog } from "@ui/MainPanel/MessageLog";
 import { useEffect } from "react";
 
 
-const FIXED_OVERHEAD = 188;
-const DYNAMIC_OVERHEAD = 0.684;
+const BLOB_BASE_FEE_SCALAR = 810949n;
+const BASE_FEE_SCALAR = 1368n;
 
 export function MainPanel({ locked, setLocked }) {
   const queryClient = useQueryClient();
@@ -21,25 +21,33 @@ export function MainPanel({ locked, setLocked }) {
   const { data: blockNumber } = useBlockNumber({ watch: true});
   const { data, isFetched, queryKey } = useEstimateFeesPerGas();
 
-  const oracle = useReadContract({
-    address: ADDRESSES["Base"].ORACLE,
-    abi: ORACLE_ABI,
-    functionName: "l1BaseFee",
+  const base = useReadContracts({
+    contracts: [
+      {
+        address: ADDRESSES["Base"].ORACLE,
+        abi: ORACLE_ABI,
+        functionName: "l1BaseFee",
+      },
+      {
+        address: ADDRESSES["Base"].ORACLE,
+        abi: ORACLE_ABI,
+        functionName: "blobBaseFee",
+      },
+    ],
     query: { enabled: chain?.name === "Base" },
   });
-
   useEffect(() => {
     if (!locked) {
       queryClient.invalidateQueries({ queryKey });
-      queryClient.invalidateQueries({ queryKey: oracle.queryKey }); // (oracle)
+      queryClient.invalidateQueries({ queryKey: base.queryKey }); // (oracle)
     } // refresh balance on every block?
   }, [blockNumber, locked]);
 
   const calculators = {
-    "Base": (l2Gas, txDataGas) => {
-      if (!isFetched || !oracle.isFetched) return 0n; // || data.gasPrice === null
-      const l1BaseFee = oracle.data;
-      const l1DataFee = l1BaseFee * BigInt(Math.ceil((txDataGas + FIXED_OVERHEAD) * DYNAMIC_OVERHEAD));
+    "Base": (l2Gas, txCompressedSize) => {
+      if (!isFetched || !base.isFetched) return 0n; // || data.gasPrice === null
+      const weightedGasPrice = 16n * BASE_FEE_SCALAR * base.data[0].result / 1000000n + BLOB_BASE_FEE_SCALAR * base.data[1].result;
+      const l1DataFee = txCompressedSize * weightedGasPrice
       const l2ExecutionFee = data.maxFeePerGas * l2Gas;
       return l1DataFee + l2ExecutionFee;
     }

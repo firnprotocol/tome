@@ -1,6 +1,6 @@
-// https://community.optimism.io/docs/developers/build/transaction-fees/#the-l1-data-fee
+// https://docs.optimism.io/stack/transactions/fees#ecotone
 
-export function optimismTxDataGas(data) {
+export function optimismTxCompressedSize(data) {
   // assumes txData isBytesLike
   data = data.slice(2); // cut off 0x
   let zeroBytes = 0;
@@ -9,5 +9,5 @@ export function optimismTxDataGas(data) {
     if (data.slice(i, i + 2) === "00") zeroBytes++;
     else nonZeroBytes++;
   }
-  return zeroBytes * 4 + nonZeroBytes * 16;
+  return BigInt(zeroBytes * 4 + nonZeroBytes * 16 >> 4); // floor div by 16
 }
