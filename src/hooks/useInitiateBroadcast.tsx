@@ -6,7 +6,7 @@ import { ExplorerLink } from "components/ExplorerLink";
 import { ADDRESSES } from "constants/addresses";
 
 
-const defaultSnapOrigin = "npm:@firnprotocol/snap";
+const defaultSnapOrigin = "npm:@firnprotocol/snap"; // "local:http://localhost:8080"
 
 export function useInitiateBroadcast() {
   const config = useConfig();
@@ -16,15 +16,13 @@ export function useInitiateBroadcast() {
     setLocked(true);
 
     try {
-      if (connector.name !== "MetaMask")
-        throw { message: "Not MetaMask" };
-      const publicClient = await getPublicClient(config);
+      // if (connector.name !== "MetaMask") throw { message: "Not MetaMask" };
       const snaps = await window.ethereum.request({
         method: "wallet_getSnaps",
       });
       const snapPresent = Object.values(snaps).find((snap) => snap.id === defaultSnapOrigin);
       if (!snapPresent)
-        await publicClient.request({
+        await window.ethereum.request({
           method: "wallet_requestSnaps",
           params: { [defaultSnapOrigin]: {} },
         });
