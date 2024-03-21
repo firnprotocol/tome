@@ -9,8 +9,7 @@ import { ADDRESSES } from "constants/addresses";
 const defaultSnapOrigin = "npm:@firnprotocol/snap"; // "local:http://localhost:8080"
 
 export function useInitiateBroadcast() {
-  const config = useConfig();
-  const { chain, connector } = useAccount();
+  const { chain } = useAccount();
 
   async function initiateBroadcast({ setDisplay, setLocked, data, tip }) {
     setLocked(true);
