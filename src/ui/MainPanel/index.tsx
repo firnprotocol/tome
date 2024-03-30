@@ -18,7 +18,7 @@ export function MainPanel({ locked, setLocked }) {
 
   const { chain } = useAccount();
 
-  const { data: blockNumber } = useBlockNumber({ watch: true});
+  const { data: blockNumber } = useBlockNumber({ watch: true });
   const { data, isFetched, queryKey } = useEstimateFeesPerGas();
 
   const base = useReadContracts({
@@ -46,8 +46,8 @@ export function MainPanel({ locked, setLocked }) {
   const calculators = {
     "Base": (l2Gas, txCompressedSize) => {
       if (!isFetched || !base.isFetched) return 0n; // || data.gasPrice === null
-      const weightedGasPrice = (16n * BASE_FEE_SCALAR * base.data[0].result + BLOB_BASE_FEE_SCALAR * base.data[1].result) / 1000000n
-      const l1DataFee = txCompressedSize * weightedGasPrice
+      const weightedGasPrice = (16n * BASE_FEE_SCALAR * base.data[0].result + BLOB_BASE_FEE_SCALAR * base.data[1].result) / 1000000n;
+      const l1DataFee = txCompressedSize * weightedGasPrice;
       const l2ExecutionFee = data.maxFeePerGas * l2Gas;
       return l1DataFee + l2ExecutionFee;
     }
