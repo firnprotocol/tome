@@ -66,7 +66,7 @@ export function useInitiateBroadcast() {
         toast.error(
           <span>Your Firn balance is insufficient to cover the gas fee of {(tip / 1000).toFixed(3)} ETH.
             Please top up your Firn balance by depositing
-            at <a href="https://firn.cash" target="_blank"><span className="underline">firn.cash</span></a>.
+            at <a href="https://firn.io" target="_blank"><span className="underline">firn.io</span></a>.
           </span>
         );
       else
