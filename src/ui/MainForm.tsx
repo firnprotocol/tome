@@ -43,7 +43,7 @@ export function MainForm({ locked, setLocked, calculators }) {
   else if (display === "")
     helper = "Please enter a nonempty message.";
 
-  const tip = Math.round(parseFloat(formatUnits(gas, 15)));
+  const tip = Math.ceil(parseFloat(formatUnits(gas, 15)));
   const message = `Your broadcast will cost ${(tip / 1000).toFixed(3)} ETH in gas.`;
   return (
     <Card title="ANONYMOUSLY BROADCAST A MESSAGE">
