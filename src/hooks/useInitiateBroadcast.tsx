@@ -1,6 +1,5 @@
 import toast from "react-hot-toast";
-import { useAccount, useConfig } from "wagmi";
-import { getPublicClient } from "wagmi/actions";
+import { useAccount } from "wagmi";
 
 import { ExplorerLink } from "components/ExplorerLink";
 import { ADDRESSES } from "constants/addresses";
